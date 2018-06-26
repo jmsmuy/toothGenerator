@@ -1,8 +1,8 @@
 #define DEBOUNCE_THRESH 500
 #define CASE_1 // this is ref tooth same as small tooth and aligned
-#define CASE_2 // this is ref tooth same as small tooth but not aligned
-#define CASE_3 // this is ref tooth double size, start aligned
-#define CASE_4 // this is ref tooth double size, start misaligned
+//#define CASE_2 // this is ref tooth same as small tooth but not aligned
+//#define CASE_3 // this is ref tooth double size, start aligned
+//#define CASE_4 // this is ref tooth double size, start misaligned
 
 long rpm = 6500;
 long toothPerCycle = 116;
@@ -48,26 +48,51 @@ void loop() {
   // put your main code here, to run repeatedly:
   delayMicroseconds(delayMicroSecondsBetweenSmallTooth);
   toothCounter++;
-  #if CASE_1
-    if (toothCounter >= toothPerCycleTimes2) {
-      PORTB = B11000000;
-      toothCounter = -1;
-    } else {
-      PORTB = ~(PORTB) & B10000000;
-    }
-  #elif CASE_2
-    if (toothCounter >= toothPerCycleTimes2) {
-      PORTB = B11000000;
-      toothCounter = -1;
-    } else {
-      PORTB = ~(PORTB) & B10000000;
-    }
-  #elif CASE_3
-  
-  #elif CASE_4
-  
-  #endif
-  if(changeDetected){
+#ifdef CASE_1
+  if (toothCounter >= toothPerCycleTimes2) {
+    PORTB = B11000000;
+    toothCounter = -1;
+  } else {
+    PORTB = ~(PORTB) & B10000000;
+  }
+#endif
+#ifdef CASE_2
+  if (toothCounter >= toothPerCycleTimes2 - 1) {
+    PORTB = B01000000;
+  } else if (toothCounter >= toothPerCycleTime2) {
+    PORTB = B10000000;
+    toothCounter = -1;
+  } else {
+    PORTB = ~(PORTB) & B10000000;
+  }
+#endif
+#ifdef CASE_3
+  if (toothCounter >= toothPerCycleTimes2) {
+    PORTB = B11000000;
+    toothCounter = -1;
+  } else if (toothPerCycleTime2 == 0) {
+    PORTB = B01000000;
+  } else if (toothPerCycleTime2 == 1) {
+    PORTB = B10000000;
+  } else {
+    PORTB = ~(PORTB) & B10000000;
+  }
+#endif
+#ifdef CASE_4
+  if (toothCounter >= toothPerCycleTimes2) {
+    PORTB = B10000000;
+    toothCounter = -1;
+  } else if (toothPerCycleTime2 == 0) {
+    PORTB = B01000000;
+  } else if (toothPerCycleTime2 == 1) {
+    PORTB = B11000000;
+  } else if (toothPerCycleTime2 == 2) {
+    PORTB = B00000000;
+  } else {
+    PORTB = ~(PORTB) & B10000000;
+  }
+#endif
+  if (changeDetected) {
     Serial.println("Change detected");
     Serial.println(rpm);
     changeDetected = false;
