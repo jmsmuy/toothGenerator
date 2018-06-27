@@ -1,8 +1,8 @@
 #define DEBOUNCE_THRESH 500
-#define CASE_1 // this is ref tooth same as small tooth and aligned
+//#define CASE_1 // this is ref tooth same as small tooth and aligned
 //#define CASE_2 // this is ref tooth same as small tooth but not aligned
 //#define CASE_3 // this is ref tooth double size, start aligned
-//#define CASE_4 // this is ref tooth double size, start misaligned
+#define CASE_4 // this is ref tooth double size, start misaligned
 
 long rpm = 6500;
 long toothPerCycle = 116;
@@ -57,11 +57,13 @@ void loop() {
   }
 #endif
 #ifdef CASE_2
-  if (toothCounter >= toothPerCycleTimes2 - 1) {
-    PORTB = B01000000;
-  } else if (toothCounter >= toothPerCycleTime2) {
+  if (toothCounter >= toothPerCycleTimes2) {
     PORTB = B10000000;
     toothCounter = -1;
+  } else if (toothCounter == 0) {
+    PORTB = B01000000;
+  } else if (toothCounter == 1) {
+    PORTB = B10000000;
   } else {
     PORTB = ~(PORTB) & B10000000;
   }
@@ -70,9 +72,9 @@ void loop() {
   if (toothCounter >= toothPerCycleTimes2) {
     PORTB = B11000000;
     toothCounter = -1;
-  } else if (toothPerCycleTime2 == 0) {
+  } else if (toothCounter == 0) {
     PORTB = B01000000;
-  } else if (toothPerCycleTime2 == 1) {
+  } else if (toothCounter == 1) {
     PORTB = B10000000;
   } else {
     PORTB = ~(PORTB) & B10000000;
@@ -82,11 +84,11 @@ void loop() {
   if (toothCounter >= toothPerCycleTimes2) {
     PORTB = B10000000;
     toothCounter = -1;
-  } else if (toothPerCycleTime2 == 0) {
+  } else if (toothCounter == 0) {
     PORTB = B01000000;
-  } else if (toothPerCycleTime2 == 1) {
+  } else if (toothCounter == 1) {
     PORTB = B11000000;
-  } else if (toothPerCycleTime2 == 2) {
+  } else if (toothCounter == 2) {
     PORTB = B00000000;
   } else {
     PORTB = ~(PORTB) & B10000000;
